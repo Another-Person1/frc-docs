@@ -1,14 +1,12 @@
 # Addressable LEDs
 
-Addressable LEDs have been commonly used by teams for several years for a variety of reasons.
+Addressable LEDs are widely used by teams for debugging, visual markers, and aesthetic appeal.
 
-LED strips are the most common, but other form factors such as matrixes and bars are available as well, so your code will work even if you are not using a LED strip.
+WPILib provides an API for controlling WS2811, WS2812B, SK6812, and similar LEDs connected to the SIGNAL pin of a SMART I/O connector and without the need an external LED controller.
 
-They allow teams to debug robot functionality from the audience, provide a visual marker for their robot, and can simply add some visual appeal. WPILib has an API for controlling WS2812, WS2812B, and potentially other LEDs that share the same protocol with their data pin connected to the SIGNAL pin of a SMART I/O connector. These types of addressable LEDs are also referred to as NeoPixels by other companies.
+These LEDs, often called NeoPixels, can be controlled even when the robot is disabled.
 
-LEDs can also be controlled using this API while the robot is disabled.
-
-.. note:: This **library only supports WS2812B-compliant addressable** LEDs. HUB-75 LED matrixes, DotStar LEDs, and other types of addressable LEDs are not supported by this API. In addition to that, some WS2812B-compliant strips with different timings (WS2815, etc.) may not work.
+.. note:: This library supports only WS2812B-compliant LEDs. LEDs that do not follow the below timings may not work correctly. For example, WS2815 & DotStar LEDs are not supported.
 
 Timings:
 
@@ -17,27 +15,23 @@ Timings:
 - T1H: 750ns
 - T1L: 500ns
 
+.. important:: Systemcore supports multiple addressable LED products simultaneously, unlike the roboRIO, and allows LED control while the robot is disabled.
 
-.. important:: Unlike the roboRIO, the Systemcore supports multiple addressable LED products at once. LEDs can also be controlled using this API while the robot is disabled.
+.. seealso:: For more detailed information about powering and best practices for addressable LEDs, see the [Adafruit NeoPixel Überguide](https://learn.adafruit.com/adafruit-neopixel-uberguide/powering-neopixels).
 
+.. note:: **Power and Signal Considerations**
 
-.. seealso:: For detailed information about powering and best practices for addressable LEDs, see the [Adafruit NeoPixel Überguide](https://learn.adafruit.com/adafruit-neopixel-uberguide/powering-neopixels).
+   - WS281x LEDs are designed for **5V**, but Systemcore ports output **3.3V**. A logic level shifter, like the [Adafruit Pixel Shifter](https://www.adafruit.com/product/6066), is necessary if there is flickering or incorrect behavior.
+   - Use a **good-quality appropriately sized external 5V regulator** (e.g. [Redux Zinc-V+](https://shop.reduxrobotics.com/products/zinc-v), [Pololu S13VxF5](https://www.pololu.com/product/4082) or [CTRE VRM 5V output](https://store.ctr-electronics.com/products/voltage-regulator-module)) to power the LEDs, ensuring the grounds are tied together.
+   - If you have a lot of LEDs, a 300-500 Ohm data line resistor and a 1000μF capacitor across the power pins are recommended. Power may need to be [distributed throughout the strip](https://learn.adafruit.com/adafruit-neopixel-uberguide/powering-neopixels#distributing-power-2894492).
 
-.. note:: WS281x LEDs (with the exception of the WS2815, see below warning) are designed for **5V**, but Systemcore ports output **3.3V**. This may cause issues with some LED strips, and a logic level shifter is needed, such as the [Adafruit Pixel Shifter](https://www.adafruit.com/product/6066).
-
-.. note:: The 300-500 Ohm data line resistor and large 1000μF capacitor across the power pins are recommended, especially with larger quantities of LEDs. Also, use an external 5V regulator to power the LEDs, with the **grounds** tied together.
-
-.. warning:: WS2815 LEDs (and maybe other products as well, **check the label**) are designed for **12V** but have **5V** data (see above note). The **backup line on the first strip** needs to be connected to **ground**, **not** connected to the data line despite what other guides may say.
-
-Example wiring diagram:
-.. image:: https://github.com/user-attachments/assets/2f1d7f05-f11b-4bed-bb91-267134f04f23)
 ## Instantiating the AddressableLED Object
 
 You first create an ``AddressableLED`` object that takes the SMART I/O port as an argument. Then you set the number of LEDs that are connected, which can be done with the ``setLength()`` function.
 
 .. warning:: It is important to note that setting the length of the LED header is an expensive task and it's **not** recommended to run this periodically.
 
-After the length of the strip has been set, you'll have to create an ``AddressableLEDBuffer`` object that takes the number of LEDs as an input. You'll then call ``myAddressableLed.setData(myAddressableLEDBuffer)`` to set the led output data. Finally, you can call ``myAddressableLed.start()`` to write the output continuously. Below is a full example of the initialization process.
+After the length of the strip has been set, you'll have to create an ``AddressableLEDBuffer`` object that takes the number of LEDs as an input. You'll then call ``myAddressableLed.setData(myAddressableLEDBuffer)`` to set the LED output data. Finally, you can call ``myAddressableLed.start()`` to write the output continuously. Below is a full example of the initialization process.
 
 .. note:: C++ does not have an AddressableLEDBuffer, and instead uses an Array.
 
@@ -991,7 +985,7 @@ Blends will combine the output colors of patterns together, by averaging out the
 
 ``LEDPattern`` is an easy and convenient way of controlling LEDs, but direct access to the LED colors is sometimes needed for custom patterns and animations.
 
-Color can be set to an individual led on the strip using two methods: ``setRGB()``, which takes RGB values as an input, and ``setHSV()``, which takes HSV values as an input. Low-level access is typically done with an indexed for-loop that iterates over each LED index of the section to control. This method can be used for both ``AddressableLEDBuffer`` and ``AddressableLEDBufferView`` objects in Java, and for ``std::span`` for C++.
+Color can be set to an individual LED on the strip using two methods: ``setRGB()``, which takes RGB values as an input, and ``setHSV()``, which takes HSV values as an input. Low-level access is typically done with an indexed for-loop that iterates over each LED index of the section to control. This method can be used for both ``AddressableLEDBuffer`` and ``AddressableLEDBufferView`` objects in Java, and for ``std::span`` for C++.
 
 .. note:: RGB stands for Red, Green, and Blue. This is a fairly common color model as it's quite easy to understand, and it corresponds with a typical LED configuration that's comprised of one red, one green, and one blue sub-LED. LEDs can be set with the ``setRGB`` method that takes 4 arguments: index of the LED, amount of red, amount of green, amount of blue. The amount of red, green, and blue are integer values between 0-255.
 
