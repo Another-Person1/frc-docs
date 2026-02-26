@@ -2,13 +2,17 @@
 
 Addressable LEDs are widely used by teams for debugging, visual markers, and aesthetic appeal.
 
-WPILib provides an API for controlling WS2811, WS2812B, SK6812, and similar LEDs connected to the SIGNAL pin of a SMART I/O connector and without the need an external LED controller.
+WPILib provides an API for controlling WS2811, WS2812B, SK6812, and other LEDs that use similar protocols, often called NeoPixels, without the need for an external LED controller.
 
-These LEDs, often called NeoPixels, can be controlled even when the robot is disabled.
+Commonly they are in strips, but bars, circles, matrices, and other form factors are also available. These LEDs are individually controllable, allowing for a wide variety of patterns and effects.
+
+Wiring addressable LEDs is simple: the strip's (or other product's) DATA pin is connected to the SIGNAL pin of a SMART I/O connector, with power and ground connected to a good-quality external 5V regulator.
+
+These LEDs can be controlled even when the robot is disabled.
 
 .. note:: This library supports only WS2812B-compliant LEDs. LEDs that do not follow the below timings may not work correctly. For example, WS2815 & DotStar LEDs are not supported.
 
-Timings:
+.. collapse:: Timing details
 
 - T0H: 375ns
 - T0L: 875ns
@@ -23,7 +27,7 @@ Timings:
 
    - WS281x LEDs are designed for **5V**, but Systemcore ports output **3.3V**. A logic level shifter, like the [Adafruit Pixel Shifter](https://www.adafruit.com/product/6066), is necessary if there is flickering or incorrect behavior.
    - Use a **good-quality appropriately sized external 5V regulator** (e.g. [Redux Zinc-V+](https://shop.reduxrobotics.com/products/zinc-v), [Pololu S13VxF5](https://www.pololu.com/product/4082) or [CTRE VRM 5V output](https://store.ctr-electronics.com/products/voltage-regulator-module)) to power the LEDs, ensuring the grounds are tied together.
-   - If you have a lot of LEDs, a 300-500 Ohm data line resistor and a 1000μF capacitor across the power pins are recommended. Power may need to be [distributed throughout the strip](https://learn.adafruit.com/adafruit-neopixel-uberguide/powering-neopixels#distributing-power-2894492).
+   - If you have a lot of LEDs, a 300-500 Ohm data line resistor and a 1000μF capacitor across the power pins are recommended. Too much resistance (>500 Ohm) can degrade the signal and cause flickering or communication failures. Power may need to be [distributed throughout the strip](https://learn.adafruit.com/adafruit-neopixel-uberguide/powering-neopixels#distributing-power-2894492).
 
 ## Instantiating the AddressableLED Object
 
