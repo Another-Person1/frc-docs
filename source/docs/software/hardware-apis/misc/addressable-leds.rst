@@ -7,7 +7,7 @@ WPILib provides an API for controlling WS2811, WS2812B, SK6812, and other LEDs t
 
 Commonly they are in strips, but bars, circles, matrices, and other form factors are also available. These LEDs are individually controllable, allowing for a wide variety of patterns and effects.
 
-Wiring addressable LEDs is simple: the strip's (or other product's) DATA pin is connected to the SIGNAL pin of a SMART I/O connector, with power and ground connected to a good-quality external 5V regulator.
+Wiring addressable LEDs is simple: the addressable LED DATA pin is connected to the SIGNAL pin of a SMART I/O connector, with power and ground connected to a good-quality external 5V regulator.
 
 These LEDs can be controlled even when the robot is disabled.
 
